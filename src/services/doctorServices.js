@@ -86,7 +86,7 @@ let saveInfoDoctor = (data) => {
                         description: data.description,
                         doctorId: data.doctorId,
                     })
-                } else if (data.action = 'EDIT') {
+                } else if (data.action === 'EDIT') {
                     let doctorMarkdown = await db.Markdown.findOne({
                         where: { doctorId: data.doctorId },
                         raw: false
@@ -209,17 +209,9 @@ let bulkCreateSchedule = (data) => {
                         return item;
                     })
                 }
-                let existing = await db.Schedule.findAll({
-                    where: { doctorId: data.doctorId, date: data.formattedDate },
-                    attributes: ['timeType', 'date', 'doctorId', 'maxNumber'],
-                    raw: true
-                })
 
-                let toCreate = _.differenceWith(schedule, existing, (a, b) => {
-                    return a.timeType === b.timeType && +a.date === +b.date
-                })
-                if (toCreate && toCreate.length > 0) {
-                    await db.Schedule.bulkCreate(toCreate)
+                if (schedule && schedule.length > 0) {
+                    await db.Schedule.bulkCreate(schedule)
                 }
                 resolve({
                     errCode: 0,
